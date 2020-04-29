@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  example_server:
+    build: ./server/
+    container_name: example_server
+    working_dir: /var/www/server
+    ports:
+      - "$SERVER_PORT:$SERVER_PORT"
+    volumes:
+      - ./server/:/var/www/server
+      - ./client/:/var/www/client/
+    command: python manage.py runserver 0.0.0.0:$SERVER_PORT
+    environment:
+      - DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+      - PGHOST=$DATABASE_HOST
+    env_file:
+      - .env
+    depends_on:
+      - example_database
+
+  example_database:
+    container_name: example_database
+    image: postgres:latest
+    volumes:
+      - ./initial.sql:/docker-entrypoint-initdb.d/initial.sql
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+  example_client:
+    image: node:latest
+    container_name: example_client
+    working_dir: /var/www/client/
+    command: yarn start
+    ports:
+      - "$CLIENT_PORT:$CLIENT_PORT"
+    volumes:
+      - ./server/:/var/www/server
+      - ./client/:/var/www/client/
+    stdin_open: true
