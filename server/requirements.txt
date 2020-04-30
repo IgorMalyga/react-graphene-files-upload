@@ -1,3 +1,6 @@
 Django==3.0.5
+django-cors-headers==3.2.1
 graphene==2.1.8
 graphene-django==2.9.1
+graphene-file-upload==1.2.2
+python-image-resize==1.1.2
